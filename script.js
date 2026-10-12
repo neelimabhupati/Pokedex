@@ -2,7 +2,7 @@ let pokemonList = []; // Global variable
 const dialog = document.getElementById('pokemonDialog');
 let currentIndex = 0;
 let currentOffset = 0;
-let isLoading = false; 
+let isLoading = false;
 
 async function init() {
     pokemonList = [];
@@ -24,15 +24,36 @@ async function fetchCharacters() {
     return details;
 }
 
+// Types HTML ని తయారు చేసే లాజిక్ అంతా script.js లోకి మార్చడం
+function getTypesHtml(types) {
+    return types.map(t => {
+        let typeName = t.type.name;
+        let badgeColor = TYPE_COLORS[typeName.toLowerCase()] || '#777';
+
+        // template.js లో ఉన్న కేవలం HTML టెంప్లేట్ ఫంక్షన్‌కి పంపిస్తున్నాం
+        return createTypeBadgeHTML(typeName, badgeColor);
+    }).join('');
+}
+
 function renderCharacters(characters) {
     let container = document.getElementById('character-container');
     if (!container)
         return;
     container.innerHTML = '';
+
     characters.forEach((char, index) => {
-        container.innerHTML += createCharacterCardHTML(char, index);
+
+        let typesHtml = getTypesHtml(char.types);
+        let primaryType = char.types[0].type.name;
+        let name = char.name;
+        let id = char.id;
+        let imageUrl = char.sprites.other['official-artwork'].front_default;
+        let cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
+
+        container.innerHTML += createCharacterCardHTML(index, typesHtml, name, id, imageUrl, cardBgColor);
     });
 }
+
 
 function openPokemonDialog(index) {
     currentIndex = index;
@@ -50,21 +71,67 @@ function openPokemonDialog(index) {
     }
 }
 
+// async function renderEvolutionChain(pokemon) {
+//     const evoContainer = document.getElementById('evoContainer');
+//     evoContainer.innerHTML = 'Loading evolution...';
+
+//     try {
+//         let speciesResponse = await fetch(pokemon.species.url);
+//         let speciesData = await speciesResponse.json();
+//         let evoResponse = await fetch(speciesData.evolution_chain.url);
+//         let evoData = await evoResponse.json();
+//         let evoChainNames = extractEvoNames(evoData.chain);
+
+//         let evoHtmlArray = await Promise.all(
+//             evoChainNames.map((name, i) => createEvoItemHTML(name, i === evoChainNames.length - 1))
+//         );
+//         evoContainer.innerHTML = evoHtmlArray.join('');
+//     } catch (error) {
+//         console.error("Evolution data error", error);
+//         evoContainer.innerHTML = 'Evolution details unavailable';
+//     }
+// }
+
+// 1. Sub-function: ఎవల్యూషన్ పేర్లను API నుండి తెచ్చుకోవడానికి
+async function fetchEvolutionNames(pokemon) {
+    let speciesResponse = await fetch(pokemon.species.url);
+    let speciesData = await speciesResponse.json();
+    let evoResponse = await fetch(speciesData.evolution_chain.url);
+    let evoData = await evoResponse.json();
+    return extractEvoNames(evoData.chain);
+}
+
+async function fetchEvoItemsDetails(evoChainNames) {
+    return await Promise.all(
+        evoChainNames.map(async (name) => {
+            let res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+            let data = await res.json();
+            return {
+                name: name,
+                imgUrl: data.sprites.other['official-artwork'].front_default
+            };
+        })
+    );
+}
+
 async function renderEvolutionChain(pokemon) {
     const evoContainer = document.getElementById('evoContainer');
+    if (!evoContainer) return;
+    
     evoContainer.innerHTML = 'Loading evolution...';
 
     try {
-        let speciesResponse = await fetch(pokemon.species.url);
-        let speciesData = await speciesResponse.json();
-        let evoResponse = await fetch(speciesData.evolution_chain.url);
-        let evoData = await evoResponse.json();
-        let evoChainNames = extractEvoNames(evoData.chain);
+        let evoChainNames = await fetchEvolutionNames(pokemon);
+        let evoItemsData = await fetchEvoItemsDetails(evoChainNames);
 
-        let evoHtmlArray = await Promise.all(
-            evoChainNames.map((name, i) => createEvoItemHTML(name, i === evoChainNames.length - 1))
-        );
+        let evoHtmlArray = evoItemsData.map((item, i) => {
+            let isLast = i === evoItemsData.length - 1;
+            let arrow = isLast ? '' : '<div class="evo-arrow">>>></div>';
+            return createEvoItemHTML(item.name, item.imgUrl, arrow);
+        });
+
         evoContainer.innerHTML = evoHtmlArray.join('');
+        
     } catch (error) {
         console.error("Evolution data error", error);
         evoContainer.innerHTML = 'Evolution details unavailable';

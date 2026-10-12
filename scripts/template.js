@@ -1,13 +1,5 @@
-function createCharacterCardHTML(char, index) {
-    let typesHtml = getTypesHtml(char.types);
-    let primaryType = char.types[0].type.name;
-    let name = char.name;
-    let id = char.id;
-    let imageUrl = char.sprites.other['official-artwork'].front_default;
+function createCharacterCardHTML(index, typesHtml, name, id, imageUrl, cardBgColor) {
 
-    console.log("primarytypes:", primaryType);
-
-    let cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
     return `
                 <div class="character-card" data-id="${id}" 
                     aria-label="Open ${name} details" onclick="openPokemonDialog(${index})">
@@ -38,13 +30,23 @@ function generateStatsHTML(stats) {
         `).join('');
 }
 
-async function createEvoItemHTML(pokeName, isLast) {
-    let pokeDetails = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeName}`);
-    let pokeResonse = await pokeDetails.json();
-    let imgUrl = pokeResonse.sprites.other['official-artwork'].front_default;
+// async function createEvoItemHTML(pokeName, isLast) {
+//     let pokeDetails = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeName}`);
+//     let pokeResonse = await pokeDetails.json();
+//     let imgUrl = pokeResonse.sprites.other['official-artwork'].front_default;
 
-    let arrow = isLast ? '' : `<div class="evo-arrow">≫</div>`;
+//     let arrow = isLast ? '' : `<div class="evo-arrow">≫</div>`;
 
+//     return `
+//         <div class="evo-item">
+//             <img src="${imgUrl}" alt="${pokeName}">
+//             <p style="text-transform: capitalize;">${pokeName}</p>
+//         </div>
+//         ${arrow}
+//     `;
+// }
+
+function createEvoItemHTML(pokeName, imgUrl, arrow) {
     return `
         <div class="evo-item">
             <img src="${imgUrl}" alt="${pokeName}">
@@ -54,12 +56,7 @@ async function createEvoItemHTML(pokeName, isLast) {
     `;
 }
 
-// from Types list prepare HTML badges
-function getTypesHtml(types) {
-    return types.map(t => {
-        let typeName = t.type.name;
-        let badgeColor = TYPE_COLORS[typeName] || '#777';
-
-        return `<span class="type-badge style="background-color: ${badgeColor};">${typeName}</span>`;
-    }).join('');
+function createTypeBadgeHTML(typeName, badgeColor) {
+    return `<span class="type-badge style="background-color: ${badgeColor};">${typeName}</span>`;
 }
+
