@@ -1,4 +1,4 @@
-let pokemonList = []; // Global variable
+let pokemonList = []; 
 const dialog = document.getElementById('pokemonDialog');
 let currentIndex = 0;
 let currentOffset = 0;
@@ -24,13 +24,11 @@ async function fetchCharacters() {
     return details;
 }
 
-// Types HTML ని తయారు చేసే లాజిక్ అంతా script.js లోకి మార్చడం
 function getTypesHtml(types) {
     return types.map(t => {
         let typeName = t.type.name;
         let badgeColor = TYPE_COLORS[typeName.toLowerCase()] || '#777';
 
-        // template.js లో ఉన్న కేవలం HTML టెంప్లేట్ ఫంక్షన్‌కి పంపిస్తున్నాం
         return createTypeBadgeHTML(typeName, badgeColor);
     }).join('');
 }
@@ -50,14 +48,17 @@ function renderCharacters(characters) {
         let imageUrl = char.sprites.other['official-artwork'].front_default;
         let cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
 
-        container.innerHTML += createCharacterCardHTML(index, typesHtml, name, id, imageUrl, cardBgColor);
+        container.innerHTML += createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor);
     });
 }
 
-
-function openPokemonDialog(index) {
-    currentIndex = index;
-    let pokemon = pokemonList[index];
+function openPokemonDialog(pokemonId) {
+    let pokemon = pokemonList.find(p => p.id === pokemonId);
+    
+    if (!pokemon) {
+        console.error("Pokemon not found with id:", pokemonId);
+        return;
+    }
 
     document.getElementById('dialogName').textContent = pokemon.name;
     document.getElementById('dialogImage').src = pokemon.sprites.other['official-artwork'].front_default;
@@ -67,32 +68,10 @@ function openPokemonDialog(index) {
     if (dialog) {
         dialog.showModal();
     } else {
-        console.error("not found pokomon id in html!");
+        console.error("dialog not found in html!");
     }
 }
 
-// async function renderEvolutionChain(pokemon) {
-//     const evoContainer = document.getElementById('evoContainer');
-//     evoContainer.innerHTML = 'Loading evolution...';
-
-//     try {
-//         let speciesResponse = await fetch(pokemon.species.url);
-//         let speciesData = await speciesResponse.json();
-//         let evoResponse = await fetch(speciesData.evolution_chain.url);
-//         let evoData = await evoResponse.json();
-//         let evoChainNames = extractEvoNames(evoData.chain);
-
-//         let evoHtmlArray = await Promise.all(
-//             evoChainNames.map((name, i) => createEvoItemHTML(name, i === evoChainNames.length - 1))
-//         );
-//         evoContainer.innerHTML = evoHtmlArray.join('');
-//     } catch (error) {
-//         console.error("Evolution data error", error);
-//         evoContainer.innerHTML = 'Evolution details unavailable';
-//     }
-// }
-
-// 1. Sub-function: ఎవల్యూషన్ పేర్లను API నుండి తెచ్చుకోవడానికి
 async function fetchEvolutionNames(pokemon) {
     let speciesResponse = await fetch(pokemon.species.url);
     let speciesData = await speciesResponse.json();
@@ -286,7 +265,6 @@ async function searchPokemon() {
 }
 
 function showSearchUI() {
-    // Elements ni mundhe get-element-by-id dwara techukovali
     let loadMoreBtn = document.getElementById('loadMoreBtn');
     let loadAmountInput = document.getElementById('loadAmountInput');
     let homeBtn = document.getElementById('homeBtn');
@@ -305,7 +283,7 @@ async function fetchAndRenderFromAPI(query) {
         let pokemonData = await response.json();
 
         renderCharacters([pokemonData]);
-        showSearchUI(); // API dwara card dhorikina Home button chupistham
+        showSearchUI();
     } catch (error) {
         let container = document.getElementById('character-container');
         container.innerHTML = `<p class="no-results">No Pokémon found for "${query}"</p>`;
