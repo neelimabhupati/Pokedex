@@ -2,10 +2,11 @@ let pokemonList = []; // Global variable
 const dialog = document.getElementById('pokemonDialog');
 let currentIndex = 0;
 let currentOffset = 0;
+let isLoading = false; 
 
 async function init() {
-    pokemonList = [];  
-    currentOffset = 0; 
+    pokemonList = [];
+    currentOffset = 0;
     let initialCount = parseInt(document.getElementById('loadAmountInput').value) || 11;
     await fetchSequentialPokemon(initialCount);
     clickBackgroundClose();
@@ -59,7 +60,7 @@ async function renderEvolutionChain(pokemon) {
         let evoResponse = await fetch(speciesData.evolution_chain.url);
         let evoData = await evoResponse.json();
         let evoChainNames = extractEvoNames(evoData.chain);
-        
+
         let evoHtmlArray = await Promise.all(
             evoChainNames.map((name, i) => createEvoItemHTML(name, i === evoChainNames.length - 1))
         );
@@ -99,7 +100,7 @@ function showPrevPokemon() {
     if (currentIndex > 0) {
         openPokemonDialog(currentIndex - 1);
     } else {
-        openPokemonDialog(pokemonList.length - 1); 
+        openPokemonDialog(pokemonList.length - 1);
     }
 }
 
@@ -171,13 +172,27 @@ async function fetchSequentialPokemon(count) {
 }
 
 async function loadMorePokemon() {
+    if (isLoading) return;
+
     let amountInput = document.getElementById('loadAmountInput');
     let amount = parseInt(amountInput.value);
 
     console.log("Before Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
-    if (amount > 0) {
-        await fetchSequentialPokemon(amount);
+
+    if (isNaN(amount) || amount <= 0) return;
+    isLoading = true;
+
+    try {
+        if (amount > 0) {
+            await fetchSequentialPokemon(amount);
+        }
+    } catch (error) {
+        console.error("Error loading pokemon:", error);
+    } finally {
+        isLoading = false;
+        console.log("After Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
     }
+
     console.log("After Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
 }
 
