@@ -1,12 +1,10 @@
-let pokemonList = []; 
+let pokemonList = [];
 const dialog = document.getElementById('pokemonDialog');
 let currentIndex = 0;
 let currentOffset = 0;
 let isLoading = false;
 
 async function init() {
-    pokemonList = [];
-    currentOffset = 0;
     let initialCount = parseInt(document.getElementById('loadAmountInput').value) || 11;
     await fetchSequentialPokemon(initialCount);
     clickBackgroundClose();
@@ -54,7 +52,7 @@ function renderCharacters(characters) {
 
 function openPokemonDialog(pokemonId) {
     let pokemon = pokemonList.find(p => p.id === pokemonId);
-    
+
     if (!pokemon) {
         console.error("Pokemon not found with id:", pokemonId);
         return;
@@ -96,7 +94,7 @@ async function fetchEvoItemsDetails(evoChainNames) {
 async function renderEvolutionChain(pokemon) {
     const evoContainer = document.getElementById('evoContainer');
     if (!evoContainer) return;
-    
+
     evoContainer.innerHTML = 'Loading evolution...';
 
     try {
@@ -110,7 +108,7 @@ async function renderEvolutionChain(pokemon) {
         });
 
         evoContainer.innerHTML = evoHtmlArray.join('');
-        
+
     } catch (error) {
         console.error("Evolution data error", error);
         evoContainer.innerHTML = 'Evolution details unavailable';
@@ -155,7 +153,6 @@ function clickBackgroundClose() {
 
     if (dialogElement) {
         dialogElement.addEventListener('click', function (event) {
-            // Click chesindi exact ga dialog background paina aithe close chestham
             if (event.target === dialogElement) {
                 dialogElement.close();
             }
@@ -173,7 +170,6 @@ function switchTab(activeTabId, activeBtnId) {
     for (let i = 0; i < allButtons.length; i++) {
         allButtons[i].classList.remove('active');
     }
-
     document.getElementById(activeTabId).style.display = 'block';
     document.getElementById(activeBtnId).classList.add('active');
 }
@@ -221,11 +217,20 @@ async function loadMorePokemon() {
     if (isLoading) return;
 
     let amountInput = document.getElementById('loadAmountInput');
+    let loadMoreBtn = document.getElementById('loadMoreBtn'); // Idi add cheyandi
     let amount = parseInt(amountInput.value);
 
-    console.log("Before Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
-
     if (isNaN(amount) || amount <= 0) return;
+    if (amount > 11) {
+        alert("Please enter again");
+        return;
+    }
+
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = true; 
+        loadMoreBtn.style.backgroundColor = '#888888';
+        loadMoreBtn.style.cursor = 'not-allowed';
+    }
     isLoading = true;
 
     try {
@@ -236,10 +241,12 @@ async function loadMorePokemon() {
         console.error("Error loading pokemon:", error);
     } finally {
         isLoading = false;
-        console.log("After Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
+        if (loadMoreBtn) {
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.style.backgroundColor = ''; // Loading complete ayyaka original color ki vastundi
+            loadMoreBtn.style.cursor = 'pointer';
+        }
     }
-
-    console.log("After Fetch - Offset:", currentOffset, "List Length:", pokemonList.length);
 }
 
 async function searchPokemon() {
