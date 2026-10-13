@@ -217,12 +217,11 @@ async function loadMorePokemon() {
     if (isLoading) return;
 
     let amountInput = document.getElementById('loadAmountInput');
-    let loadMoreBtn = document.getElementById('loadMoreBtn'); // Idi add cheyandi
-    let loadMsg = document.getElementById('loadMsg'); // మెసేజ్ ఎలిమెంట్
+    let loadMoreBtn = document.getElementById('loadMoreBtn'); 
+    let loadMsg = document.getElementById('loadMsg'); 
     let amount = parseInt(amountInput.value);
 
     if (isNaN(amount) || amount <= 0) return;
-    // 11 కంటే ఎక్కువ ఉంటే రెడ్ కలర్‌లో మెసేజ్ చూపించాలి
     if (amount > 11) {
         if (loadMsg) {
             loadMsg.style.color = 'red';
@@ -231,7 +230,6 @@ async function loadMorePokemon() {
         return;
     }
 
-    // సరిగ్గా ఉంటే మెసేజ్‌ని మళ్ళీ నార్మల్/గ్రీన్ కి మార్చవచ్చు
     if (loadMsg) {
         loadMsg.style.color = 'green';
         loadMsg.textContent = 'Enter your wished list to load more';
@@ -254,7 +252,7 @@ async function loadMorePokemon() {
         isLoading = false;
         if (loadMoreBtn) {
             loadMoreBtn.disabled = false;
-            loadMoreBtn.style.backgroundColor = ''; // Loading complete ayyaka original color ki vastundi
+            loadMoreBtn.style.backgroundColor = ''; 
             loadMoreBtn.style.cursor = 'pointer';
         }
     }
