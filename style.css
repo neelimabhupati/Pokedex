@@ -1,5 +1,5 @@
 body {
-    background-color: var(--bg-main);
+    background-image: var(--bg-image);
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
@@ -142,7 +142,7 @@ footer {
 }
 
 .character-card {
-    background-color: #2c30c5;
+    background-color: rgba(0, 0, 0, 0.6);
     border: 1px solid #1A3143;
     border-radius: 12px;
     width: 250px;
@@ -453,8 +453,13 @@ footer {
 }
 
 /* RESPONSIVE DESIGN */
-@media (min-width: 315px) and (max-width: 599px) {
+@media (min-width: 310px) and (max-width: 599px) {
 
+    #dialogImage {
+        width: 200px;
+        height: 200px;
+    }
+    
     .logo-container h2 {
         font-size: 25px;
     }

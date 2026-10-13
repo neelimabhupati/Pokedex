@@ -1,10 +1,11 @@
 :root {
     --bg-main: #2795ee;
-    --bg-header: #320cf9;;
+    --bg-header: rgb(13 145 9 / 44%);
     --border-color: #1A3143;
     --text-primary: #FFFFFF;
-    --text-secondary: #8A9BA8;
+    --text-secondary:white;
     --accent-blue: #1E384D;
+    --bg-image: url('../assets/images/Pokemon\ Landscape\ Wallpaper.jpg');
 }
 
 *{
