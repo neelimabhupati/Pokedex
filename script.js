@@ -213,6 +213,32 @@ async function fetchSequentialPokemon(count) {
     }
 }
 
+// 1. వాలిడేషన్ మరియు మెసేజ్ అప్‌డేట్ చేసే సబ్-ఫంక్షన్
+function validateInputAmount(amount, loadMsg) {
+    if (isNaN(amount) || amount <= 0) return false;
+    
+    if (amount > 11) {
+        if (loadMsg) {
+            loadMsg.style.color = 'red';
+            loadMsg.textContent = 'Please enter below 11';
+        }
+        return false;
+    }
+    
+    if (loadMsg) {
+        loadMsg.style.color = 'green';
+        loadMsg.textContent = 'Enter your wished list to load more';
+    }
+    return true;
+}
+
+function setLoadButtonState(loadMoreBtn, disabled) {
+    if (!loadMoreBtn) return;
+    loadMoreBtn.disabled = disabled;
+    loadMoreBtn.style.backgroundColor = disabled ? '#888888' : '';
+    loadMoreBtn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+}
+
 async function loadMorePokemon() {
     if (isLoading) return;
 
@@ -221,43 +247,20 @@ async function loadMorePokemon() {
     let loadMsg = document.getElementById('loadMsg'); 
     let amount = parseInt(amountInput.value);
 
-    if (isNaN(amount) || amount <= 0) return;
-    if (amount > 11) {
-        if (loadMsg) {
-            loadMsg.style.color = 'red';
-            loadMsg.textContent = 'Please enter below 11';
-        }
-        return;
-    }
+    if (!validateInputAmount(amount, loadMsg)) return;
 
-    if (loadMsg) {
-        loadMsg.style.color = 'green';
-        loadMsg.textContent = 'Enter your wished list to load more';
-    }
-
-    if (loadMoreBtn) {
-        loadMoreBtn.disabled = true;
-        loadMoreBtn.style.backgroundColor = '#888888';
-        loadMoreBtn.style.cursor = 'not-allowed';
-    }
     isLoading = true;
+    setLoadButtonState(loadMoreBtn, true);
 
     try {
-        if (amount > 0) {
-            await fetchSequentialPokemon(amount);
-        }
+        await fetchSequentialPokemon(amount);
     } catch (error) {
         console.error("Error loading pokemon:", error);
     } finally {
         isLoading = false;
-        if (loadMoreBtn) {
-            loadMoreBtn.disabled = false;
-            loadMoreBtn.style.backgroundColor = ''; 
-            loadMoreBtn.style.cursor = 'pointer';
-        }
+        setLoadButtonState(loadMoreBtn, false);
     }
 }
-
 async function searchPokemon() {
     let searchInput = document.getElementById('searchInput');
     let query = searchInput.value.trim().toLowerCase();
