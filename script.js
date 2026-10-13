@@ -301,10 +301,12 @@ function showSearchUI() {
     let loadMoreBtn = document.getElementById('loadMoreBtn');
     let loadAmountInput = document.getElementById('loadAmountInput');
     let homeBtn = document.getElementById('homeBtn');
+    let loadMsg = document.getElementById('loadMsg');
 
     if (loadMoreBtn) loadMoreBtn.style.display = 'none';
     if (loadAmountInput) loadAmountInput.style.display = 'none';
     if (homeBtn) homeBtn.style.display = 'inline-block';
+    if (loadMsg) loadMsg.style.display = 'none'; // Search lo unnappudu message hide avthundi
 }
 
 async function fetchAndRenderFromAPI(query) {
@@ -336,6 +338,7 @@ function resetHome() {
     if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
     if (loadAmountInput) loadAmountInput.style.display = 'inline-block';
     if (homeBtn) homeBtn.style.display = 'none';
+    if (loadMsg) loadMsg.style.display = 'block'; // Home ki vachaka malli message kanipistundi
 
     renderCharacters(pokemonList);
 }
