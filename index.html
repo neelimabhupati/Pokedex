@@ -77,11 +77,17 @@
             </div>
         </dialog>
         <div class="load-more-container">
-            <input type="number" id="loadAmountInput" value="0" min="1" max="50">
-            <button id="loadMoreBtn" onclick="loadMorePokemon()">Load More</button>
+            <!-- ఇన్పుట్ పై ఇనిషియల్ మెసేజ్ లేదా డైనమిక్ ఎర్రర్ కోసం -->
+            <div id="loadMsg" class="load-message">
+                Enter your wished list to load more
+            </div>
 
-            <!-- Home Page Button (పోకీమాన్ దొరకనప్పుడు మాత్రమే కనిపిస్తుంది) -->
-            <button id="homeBtn" onclick="resetHome()" style="display: none;">Home Page</button>
+            <!-- ఇన్‌పుట్ మరియు బటన్‌లు ఉన్న సెక్షన్ -->
+            <div class="load-controls">
+                <input type="number" id="loadAmountInput" value="0" min="1" max="50">
+                <button id="loadMoreBtn" onclick="loadMorePokemon()">Load More</button>
+                <button id="homeBtn" onclick="resetHome()" style="display: none;">Home Page</button>
+            </div>
         </div>
     </main>
 

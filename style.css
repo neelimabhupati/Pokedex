@@ -388,10 +388,22 @@ footer {
 
 .load-more-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
-    margin: 30px 0 50px 0;
+    gap: 10px;
+    margin-bottom: 55px;
+}
+
+.load-message {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+
+.load-controls {
+    display: flex;
+    gap: 10px;
+    /* ఇన్‌పుట్ మరియు బటన్ మధ్య గ్యాప్ */
 }
 
 #loadAmountInput {
@@ -441,7 +453,7 @@ footer {
         font-size: 25px;
     }
 
-    .footer-content  {
+    .footer-content {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -459,7 +471,7 @@ footer {
 
     .footer-content {
         gap: 10px;
-         flex-direction: row;
+        flex-direction: row;
     }
 
     .search-container {
@@ -528,4 +540,3 @@ footer {
         font-size: 36px;
     }
 }
-
