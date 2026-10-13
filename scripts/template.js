@@ -1,8 +1,8 @@
-function createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor) {
+function createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor,index) {
 
     return `
                 <div class="character-card" data-id="${id}" 
-                    aria-label="Open ${name} details" onclick="openPokemonDialog(${id})">
+                    aria-label="Open ${name} details" tabindex="${index+1}" onclick="openPokemonDialog(${id})">
                     <div class="card-header">
                         <span> ID: ${id}</span>
                         <h3 style="text-transform: capitalize;">${name}</h3>

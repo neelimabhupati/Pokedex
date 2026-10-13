@@ -48,7 +48,7 @@ function renderCharacters(characters) {
         let imageUrl = char.sprites.other['official-artwork'].front_default;
         let cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
 
-        container.innerHTML += createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor);
+        container.innerHTML += createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor,index);
     });
 }
 
@@ -66,7 +66,11 @@ function openPokemonDialog(pokemonId) {
     renderPokemonDetails(pokemon);
     switchTab('tab-main', 'btn-main');
 
+    let primaryType = pokemon.types[0].type.name;
+    let typeColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
+
     if (dialog) {
+        dialog.style.backgroundColor = typeColor;
         dialog.showModal();
     } else {
         console.error("dialog not found in html!");

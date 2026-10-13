@@ -1,16 +1,33 @@
 body {
     background-image: var(--bg-image);
+    background-repeat: no-repeat;       
+    background-size: cover;             
+    background-position: center;        
+    background-attachment: fixed;       
     color: var(--text-primary);
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
+.main_class {
+    flex: 1;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
 .flex-between-center {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* padding: 40px; */
 }
 
 .flex-center {
@@ -33,6 +50,9 @@ header {
     border-bottom: 1px solid var(--border-color);
 }
 
+.character-card:focus{
+    outline: 8px solid rgb(189, 124, 4);
+}
 .logo-container {
     gap: 12px;
 }
@@ -79,7 +99,6 @@ header {
 }
 
 .search-container input {
-
     padding: 8px 18px;
     font-size: 20px;
     background-color: #FFFFFF;
@@ -121,7 +140,6 @@ footer {
 
 .footer-logo:hover {
     transform: translateY(-35px);
-    /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); */
     filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
 }
 
@@ -139,6 +157,7 @@ footer {
     padding: 30px;
     max-width: 1200px;
     margin: 0 auto;
+    align-items: center;
 }
 
 .character-card {
@@ -153,7 +172,6 @@ footer {
     align-items: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
-
 }
 
 .card-header {
@@ -170,7 +188,7 @@ footer {
 
 .card-header h3 {
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 18px;
     text-transform: capitalize;
     margin: 0;
 }
@@ -198,7 +216,6 @@ footer {
     transform: translateY(-15px);
 }
 
-/* Type icons container */
 .card-types {
     display: flex;
     justify-content: center;
@@ -206,12 +223,11 @@ footer {
     padding: 5px 0px 4px 0px;
 }
 
-/* Base style for rounded badges */
 .type-badge {
     padding: 4px 10px;
     border-radius: 12px;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 18px;
     font-weight: 600;
     text-transform: capitalize;
     display: inline-block;
@@ -228,12 +244,8 @@ footer {
     border: none;
     border-radius: 16px;
     padding: 24px;
-    background-color: #090997;
-    /* Dark theme background */
     color: #ffffff;
     width: 450px;
-    height: 730px;
-
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     margin: auto;
     text-align: center;
@@ -286,6 +298,28 @@ footer {
     overflow-y: auto;
 }
 
+.tab-content>p {
+
+    font-size: 1.5rem;
+}
+
+.dialog-header-section,
+.dialog-footer-section {
+    background-color: #00000040;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    margin: 5px 0;
+}
+
+.dialog-footer-section {
+    justify-content: center;
+    gap: 20px;
+}
+
+
 #prevBtn,
 #nextBtn {
     background-color: rgb(224, 58, 55);
@@ -323,7 +357,7 @@ footer {
     padding: 8px 16px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 25px;
     border-bottom: 2px solid transparent;
     /* Highlight lekunnappudu invisible border */
     transition: all 0.3s ease;
@@ -344,8 +378,15 @@ footer {
 
 .stat-title {
     text-transform: capitalize;
-    color: #cccccc;
+
     width: 35%;
+    font-size: 15px;
+    color: white
+}
+
+.stat-title>p {
+
+    color: white
 }
 
 .stat-bar-bg {
@@ -382,7 +423,7 @@ footer {
 
 .evo-item p {
     margin-top: 5px;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: #ffffff;
 }
 
@@ -409,7 +450,6 @@ footer {
 .load-controls {
     display: flex;
     gap: 10px;
-    /* ఇన్‌పుట్ మరియు బటన్ మధ్య గ్యాప్ */
 }
 
 #loadAmountInput {
@@ -429,7 +469,6 @@ footer {
     border-color: #ff5350;
 }
 
-/* Load More Button Style */
 #loadMoreBtn {
     background-color: #ff5350;
     color: #ffffff;
@@ -452,14 +491,14 @@ footer {
     transform: translateY(0);
 }
 
-/* RESPONSIVE DESIGN */
+/*************************** RESPONSIVE DESIGN *****************************/
 @media (min-width: 310px) and (max-width: 599px) {
 
     #dialogImage {
         width: 200px;
         height: 200px;
     }
-    
+
     .logo-container h2 {
         font-size: 25px;
     }

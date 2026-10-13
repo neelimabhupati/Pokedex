@@ -29,14 +29,17 @@
         </div>
     </header>
 
-    <main data-id="content">
+    <main data-id="content" class="main_class">
         <div id="character-container"></div>
 
         <dialog id="pokemonDialog">
             <div>
-                <button id="closeBtn" onclick="closePokemonDialog()">Close</button>
+                <div class="dialog-header-section">
+                    <h2 id="dialogName" style="text-transform: capitalize;"></h2>
+                    <button id="closeBtn" onclick="closePokemonDialog()">Close</button>
+                </div>
 
-                <h2 id="dialogName"></h2>
+                <h2 id="dialogImageWrapper"></h2>
                 <img id="dialogImage" alt="Pokemon Image">
 
                 <!-- 1. Tabs Header Navigation -->
@@ -71,9 +74,10 @@
                     </div>
                 </div>
 
-                <button id="prevBtn" onclick="showPrevPokemon()">Previous</button>
-                <button id="nextBtn" onclick="showNextPokemon()">Next</button>
-
+                <div class="dialog-footer-section">
+                    <button id="prevBtn" onclick="showPrevPokemon()">Previous</button>
+                    <button id="nextBtn" onclick="showNextPokemon()">Next</button>
+                </div>
             </div>
         </dialog>
         <div class="load-more-container">
