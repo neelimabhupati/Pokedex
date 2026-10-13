@@ -5,7 +5,7 @@
     --text-primary: #FFFFFF;
     --text-secondary:white;
     --accent-blue: #1E384D;
-    --bg-image: url('../assets/images/Pokemon\ Landscape\ Wallpaper.jpg');
+    --bg-image: url('./assets/images/Pokemon\ Landscape\ Wallpaper.jpg');
 }
 
 *{
