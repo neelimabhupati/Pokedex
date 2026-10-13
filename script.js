@@ -1,4 +1,5 @@
 let pokemonList = [];
+let currentDisplayedList = [];
 const dialog = document.getElementById('pokemonDialog');
 let currentIndex = 0;
 let currentOffset = 0;
@@ -32,6 +33,7 @@ function getTypesHtml(types) {
 }
 
 function renderCharacters(characters) {
+    currentDisplayedList = characters; 
     let container = document.getElementById('character-container');
     if (!container)
         return;
@@ -51,7 +53,8 @@ function renderCharacters(characters) {
 }
 
 function openPokemonDialog(pokemonId) {
-    let pokemon = pokemonList.find(p => p.id === pokemonId);
+    currentIndex = currentDisplayedList.findIndex(p => p.id === pokemonId);
+    let pokemon = currentDisplayedList[currentIndex];
 
     if (!pokemon) {
         console.error("Pokemon not found with id:", pokemonId);
@@ -133,18 +136,30 @@ function closePokemonDialog() {
 }
 
 function showNextPokemon() {
-    if (currentIndex < pokemonList.length - 1) {
-        openPokemonDialog(currentIndex + 1);
+    if (currentDisplayedList.length === 0) return;
+
+    if (currentIndex < currentDisplayedList.length - 1) {
+        currentIndex++;
     } else {
-        openPokemonDialog(0);
+        currentIndex = 0; 
+    }
+    let nextPokemon = currentDisplayedList[currentIndex];
+    if (nextPokemon) {
+        openPokemonDialog(nextPokemon.id);
     }
 }
 
 function showPrevPokemon() {
+    if (currentDisplayedList.length === 0) return;
+
     if (currentIndex > 0) {
-        openPokemonDialog(currentIndex - 1);
+        currentIndex--;
     } else {
-        openPokemonDialog(pokemonList.length - 1);
+        currentIndex = currentDisplayedList.length - 1; 
+    }
+    let prevPokemon = currentDisplayedList[currentIndex];
+    if (prevPokemon) {
+        openPokemonDialog(prevPokemon.id);
     }
 }
 
@@ -213,10 +228,9 @@ async function fetchSequentialPokemon(count) {
     }
 }
 
-// 1. వాలిడేషన్ మరియు మెసేజ్ అప్‌డేట్ చేసే సబ్-ఫంక్షన్
 function validateInputAmount(amount, loadMsg) {
     if (isNaN(amount) || amount <= 0) return false;
-    
+
     if (amount > 11) {
         if (loadMsg) {
             loadMsg.style.color = 'red';
@@ -224,7 +238,7 @@ function validateInputAmount(amount, loadMsg) {
         }
         return false;
     }
-    
+
     if (loadMsg) {
         loadMsg.style.color = 'green';
         loadMsg.textContent = 'Enter your wished list to load more';
@@ -243,8 +257,8 @@ async function loadMorePokemon() {
     if (isLoading) return;
 
     let amountInput = document.getElementById('loadAmountInput');
-    let loadMoreBtn = document.getElementById('loadMoreBtn'); 
-    let loadMsg = document.getElementById('loadMsg'); 
+    let loadMoreBtn = document.getElementById('loadMoreBtn');
+    let loadMsg = document.getElementById('loadMsg');
     let amount = parseInt(amountInput.value);
 
     if (!validateInputAmount(amount, loadMsg)) return;
