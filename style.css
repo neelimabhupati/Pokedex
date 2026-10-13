@@ -231,8 +231,9 @@ footer {
     background-color: #090997;
     /* Dark theme background */
     color: #ffffff;
-    max-width: 400px;
-    width: 90%;
+    width: 450px;
+    height: 730px;
+
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     margin: auto;
     text-align: center;
@@ -280,9 +281,14 @@ footer {
     transform: scale(1.05);
 }
 
+.tab-content {
+    height: 190px;
+    overflow-y: auto;
+}
+
 #prevBtn,
 #nextBtn {
-    background-color: #2a2a3a;
+    background-color: rgb(224, 58, 55);
     color: #ffffff;
     border: 1px solid #44445a;
     padding: 10px 20px;
