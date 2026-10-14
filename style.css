@@ -1,9 +1,9 @@
 body {
     background-image: var(--bg-image);
-    background-repeat: no-repeat;       
-    background-size: cover;             
-    background-position: center;        
-    background-attachment: fixed;       
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
@@ -24,6 +24,7 @@ body {
     justify-content: center;
     padding: 60px 20px;
 }
+
 .flex-between-center {
     display: flex;
     justify-content: space-between;
@@ -50,9 +51,10 @@ header {
     border-bottom: 1px solid var(--border-color);
 }
 
-.character-card:focus{
+.character-card:focus {
     outline: 8px solid rgb(189, 124, 4);
 }
+
 .logo-container {
     gap: 12px;
 }
@@ -153,8 +155,9 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
     gap: 20px;
-    padding: 30px;
+    padding: 10px;
     max-width: 1200px;
     margin: 0 auto;
     align-items: center;
@@ -165,13 +168,30 @@ footer {
     border: 1px solid #1A3143;
     border-radius: 12px;
     width: 250px;
-    height: 250px;
+    height: 350px;
     padding: 16px 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 14px 15px rgba(214, 12, 12, 0.5),
+        0 0 8px rgba(193, 54, 54, 0.4),
+        inset 0 0 10px rgba(0, 0, 0, 0.3);
+
+    transition: all 0.3s ease-in-out;
     cursor: pointer;
+}
+
+.character-card:hover,
+.character-card:focus {
+    outline: none;
+    transform: translateY(-5px) scale(1.03);
+    box-shadow:
+        0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(255, 165, 0, 0.6),
+        0 0 35px rgba(255, 69, 0, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .card-header {
@@ -194,8 +214,8 @@ footer {
 }
 
 .card-img-wrapper {
-    width: 100%;
-    height: 150px;
+    width: 250px;
+    height: 250px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -241,14 +261,13 @@ footer {
 }
 
 #pokemonDialog {
-    border: none;
     border-radius: 16px;
     padding: 24px;
     color: #ffffff;
-    width: 450px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     margin: auto;
     text-align: center;
+    width: 500px;
 }
 
 #dialogName {
@@ -492,68 +511,135 @@ footer {
 }
 
 /*************************** RESPONSIVE DESIGN *****************************/
-@media (min-width: 310px) and (max-width: 599px) {
-
-    #dialogImage {
-        width: 200px;
-        height: 200px;
-    }
-
-    .logo-container h2 {
-        font-size: 25px;
-    }
-
-    .footer-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-    }
-}
-
 @media (max-width: 600px) {
     header {
         flex-direction: column;
         height: auto;
-        padding: 16px;
-        gap: 16px;
-    }
-
-    .footer-content {
-        gap: 10px;
-        flex-direction: row;
+        padding: 12px;
+        gap: 12px;
     }
 
     .search-container {
-        flex-direction: column;
+        width: 100%;
+        max-width: 420px;
+        gap: 8px;
     }
 
-    .footer-content p {
-        font-size: 18px;
+    .search-container input {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+
+    #searchBtn {
+        flex: 0 0 auto;
+        padding: 8px 14px;
+        font-size: 16px;
     }
 
     .logo-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         gap: 8px;
         white-space: nowrap;
-        padding: 0px 5px;
     }
 
-    .logo-container h1,
-    .logo-container span {
+    .logo-container h2 {
+        font-size: clamp(18px, 5vw, 22px);
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .main_class {
+        padding: 32px 12px;
+    }
+
+    #character-container {
+        justify-content: center;
+        gap: 16px;
+        padding: 8px;
+    }
+
+    .character-card {
+        width: min(250px, 100%);
+        height: auto;
+        min-height: 320px;
+        padding: 14px 0 18px;
+    }
+
+    .card-header {
+        padding: 0 18px;
+    }
+
+    .card-img-wrapper {
+        width: 100%;
+        height: 220px;
+    }
+
+    .type-badge {
         font-size: 16px;
-        /* Aina peddadiga unte 14px pettandi */
     }
 
-    .logo-container img {
-        width: 45px;
-        height: 45px;
+    #pokemonDialog {
+        width: min(500px, calc(100vw - 24px));
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+        padding: 12px;
+    }
+
+    #dialogName {
+        font-size: 1.4rem;
+    }
+
+    #dialogImage {
+        width: min(220px, 60vw);
+        height: min(220px, 60vw);
+    }
+
+    .tab-btn {
+        padding: 8px 6px;
+        font-size: clamp(14px, 4vw, 18px);
+    }
+
+    .tab-content > p {
+        font-size: clamp(1rem, 4vw, 1.25rem);
+    }
+
+    .evo-chain-container {
+        gap: 4px;
+    }
+
+    .evo-item img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .footer-content {
+        flex-direction: row;
+        width: 100%;
+        gap: 4px;
+        padding: 8px 12px;
+    }
+
+    .footer-content p {
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .footer-logo {
+        width: 36px;
+        height: 52px;
     }
 }
 
 @media (min-width:601px) and (max-width: 1023px) {
+
+    #pokemonDialog {
+        width: 500px;
+    }
+
     header {
         flex-direction: column;
         height: auto;
