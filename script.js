@@ -32,49 +32,71 @@ function getTypesHtml(types) {
     }).join('');
 }
 
+function createCharacterCardMarkup(character, index) {
+    const typesHtml = getTypesHtml(character.types);
+    const primaryType = character.types[0].type.name;
+    const cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
+    const imageUrl = character.sprites.other['official-artwork'].front_default;
+
+    return createCharacterCardHTML(
+        character.id,
+        typesHtml,
+        character.name,
+        character.id,
+        imageUrl,
+        cardBgColor,
+        index
+    );
+}
+
 function renderCharacters(characters) {
-    currentDisplayedList = characters; 
-    let container = document.getElementById('character-container');
-    if (!container)
+    currentDisplayedList = characters;
+
+    const container = document.getElementById('character-container');
+    if (!container) return;
+
+    container.innerHTML = characters
+        .map((character, index) => createCharacterCardMarkup(character, index))
+        .join('');
+}
+
+function getDisplayedPokemon(pokemonId) {
+    currentIndex = currentDisplayedList.findIndex(pokemon => pokemon.id === pokemonId);
+    return currentDisplayedList[currentIndex];
+}
+
+function updatePokemonDialogContent(pokemon) {
+    document.getElementById('dialogName').textContent = pokemon.name;
+    document.getElementById('dialogImage').src =
+        pokemon.sprites.other['official-artwork'].front_default;
+
+    renderPokemonDetails(pokemon);
+    switchTab('tab-main', 'btn-main');
+}
+
+function showPokemonDialog(pokemon) {
+    if (!dialog) {
+        console.error('dialog not found in html!');
         return;
-    container.innerHTML = '';
+    }
 
-    characters.forEach((char, index) => {
+    const primaryType = pokemon.types[0].type.name;
+    const typeColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
 
-        let typesHtml = getTypesHtml(char.types);
-        let primaryType = char.types[0].type.name;
-        let name = char.name;
-        let id = char.id;
-        let imageUrl = char.sprites.other['official-artwork'].front_default;
-        let cardBgColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
-
-        container.innerHTML += createCharacterCardHTML(id, typesHtml, name, id, imageUrl, cardBgColor,index);
-    });
+    dialog.style.backgroundColor = typeColor;
+    dialog.showModal();
 }
 
 function openPokemonDialog(pokemonId) {
-    currentIndex = currentDisplayedList.findIndex(p => p.id === pokemonId);
-    let pokemon = currentDisplayedList[currentIndex];
+    const pokemon = getDisplayedPokemon(pokemonId);
 
     if (!pokemon) {
-        console.error("Pokemon not found with id:", pokemonId);
+        console.error('Pokemon not found with id:', pokemonId);
         return;
     }
 
-    document.getElementById('dialogName').textContent = pokemon.name;
-    document.getElementById('dialogImage').src = pokemon.sprites.other['official-artwork'].front_default;
-    renderPokemonDetails(pokemon);
-    switchTab('tab-main', 'btn-main');
-
-    let primaryType = pokemon.types[0].type.name;
-    let typeColor = TYPE_COLORS[primaryType.toLowerCase()] || '#78C850';
-
-    if (dialog) {
-        dialog.style.backgroundColor = typeColor;
-        dialog.showModal();
-    } else {
-        console.error("dialog not found in html!");
-    }
+    updatePokemonDialogContent(pokemon);
+    showPokemonDialog(pokemon);
 }
 
 async function fetchEvolutionNames(pokemon) {
@@ -98,6 +120,15 @@ async function fetchEvoItemsDetails(evoChainNames) {
     );
 }
 
+function createEvolutionChainHTML(evoItemsData) {
+    return evoItemsData.map((item, index) => {
+        const isLast = index === evoItemsData.length - 1;
+        const arrow = isLast ? '' : '<div class="evo-arrow">>>></div>';
+
+        return createEvoItemHTML(item.name, item.imgUrl, arrow);
+    }).join('');
+}
+
 async function renderEvolutionChain(pokemon) {
     const evoContainer = document.getElementById('evoContainer');
     if (!evoContainer) return;
@@ -105,19 +136,11 @@ async function renderEvolutionChain(pokemon) {
     evoContainer.innerHTML = 'Loading evolution...';
 
     try {
-        let evoChainNames = await fetchEvolutionNames(pokemon);
-        let evoItemsData = await fetchEvoItemsDetails(evoChainNames);
-
-        let evoHtmlArray = evoItemsData.map((item, i) => {
-            let isLast = i === evoItemsData.length - 1;
-            let arrow = isLast ? '' : '<div class="evo-arrow">>>></div>';
-            return createEvoItemHTML(item.name, item.imgUrl, arrow);
-        });
-
-        evoContainer.innerHTML = evoHtmlArray.join('');
-
+        const evoChainNames = await fetchEvolutionNames(pokemon);
+        const evoItemsData = await fetchEvoItemsDetails(evoChainNames);
+        evoContainer.innerHTML = createEvolutionChainHTML(evoItemsData);
     } catch (error) {
-        console.error("Evolution data error", error);
+        console.error('Evolution data error', error);
         evoContainer.innerHTML = 'Evolution details unavailable';
     }
 }
@@ -145,7 +168,7 @@ function showNextPokemon() {
     if (currentIndex < currentDisplayedList.length - 1) {
         currentIndex++;
     } else {
-        currentIndex = 0; 
+        currentIndex = 0;
     }
     let nextPokemon = currentDisplayedList[currentIndex];
     if (nextPokemon) {
@@ -159,7 +182,7 @@ function showPrevPokemon() {
     if (currentIndex > 0) {
         currentIndex--;
     } else {
-        currentIndex = currentDisplayedList.length - 1; 
+        currentIndex = currentDisplayedList.length - 1;
     }
     let prevPokemon = currentDisplayedList[currentIndex];
     if (prevPokemon) {
@@ -213,40 +236,60 @@ function renderMainDetails(pokemon) {
     document.getElementById('pokeAbilities').textContent = abilityNames;
 }
 
-async function fetchSequentialPokemon(count) {
-    try {
-        let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=${currentOffset}`);
-        let data = await response.json();
+async function fetchPokemonPage(count) {
+    const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon?limit=${count}&offset=${currentOffset}`
+    );
+    return await response.json();
+}
 
-        console.log("API Data:", data);
-        for (let i = 0; i < data.results.length; i++) {
-            let detailRes = await fetch(data.results[i].url);
-            let detailData = await detailRes.json();
-            pokemonList.push(detailData);
-        }
-        currentOffset += count;
-        renderCharacters(pokemonList);
+async function appendPokemonDetails(results) {
+    for (let i = 0; i < results.length; i++) {
+        const pokemon = results[i];
 
-    } catch (error) {
-        console.error("Error fetching sequential pokemon:", error);
+        const response = await fetch(pokemon.url);
+        const details = await response.json();
+        pokemonList.push(details);
     }
 }
 
-function validateInputAmount(amount, loadMsg) {
-    if (isNaN(amount) || amount <= 0) return false;
+function renderPokemonList() {
+    renderCharacters(pokemonList);
+}
 
-    if (amount > 11) {
-        if (loadMsg) {
-            loadMsg.style.color = 'red';
-            loadMsg.textContent = 'Please enter below 11';
+async function fetchSequentialPokemon(count) {
+    try {
+        const data = await fetchPokemonPage(count);
+        console.log('API Data:', data);
+
+        await appendPokemonDetails(data.results);
+        currentOffset += count;
+        renderPokemonList();
+    } catch (error) {
+        console.error('Error fetching sequential pokemon:', error);
+    }
+}
+
+function setLoadAmountMessage(loadMsg, color, message) {
+    if (!loadMsg) return;
+
+    loadMsg.style.color = color;
+    loadMsg.textContent = message;
+}
+
+function isValidLoadAmount(amount) {
+    return !Number.isNaN(amount) && amount > 0 && amount <= 11;
+}
+
+function validateInputAmount(amount, loadMsg) {
+    if (!isValidLoadAmount(amount)) {
+        if (amount > 11) {
+            setLoadAmountMessage(loadMsg, 'red', 'Please enter below 11');
         }
         return false;
     }
 
-    if (loadMsg) {
-        loadMsg.style.color = 'green';
-        loadMsg.textContent = 'Enter your wished list to load more';
-    }
+    setLoadAmountMessage(loadMsg, 'green', 'Enter your wished list to load more');
     return true;
 }
 
@@ -257,48 +300,74 @@ function setLoadButtonState(loadMoreBtn, disabled) {
     loadMoreBtn.style.cursor = disabled ? 'not-allowed' : 'pointer';
 }
 
-async function loadMorePokemon() {
-    if (isLoading) return;
+function getLoadMoreControls() {
+    return {
+        amountInput: document.getElementById('loadAmountInput'),
+        loadMoreBtn: document.getElementById('loadMoreBtn'),
+        loadMsg: document.getElementById('loadMsg')
+    };
+}
 
-    let amountInput = document.getElementById('loadAmountInput');
-    let loadMoreBtn = document.getElementById('loadMoreBtn');
-    let loadMsg = document.getElementById('loadMsg');
-    let amount = parseInt(amountInput.value);
+function getLoadAmount(amountInput) {
+    return parseInt(amountInput.value, 10);
+}
 
-    if (!validateInputAmount(amount, loadMsg)) return;
-
+async function loadPokemonAndUpdateButton(amount, loadMoreBtn) {
     isLoading = true;
     setLoadButtonState(loadMoreBtn, true);
 
     try {
         await fetchSequentialPokemon(amount);
     } catch (error) {
-        console.error("Error loading pokemon:", error);
+        console.error('Error loading pokemon:', error);
     } finally {
         isLoading = false;
         setLoadButtonState(loadMoreBtn, false);
     }
 }
+
+async function loadMorePokemon() {
+    if (isLoading) return;
+
+    const controls = getLoadMoreControls();
+    const amount = getLoadAmount(controls.amountInput);
+
+    if (!validateInputAmount(amount, controls.loadMsg)) return;
+
+    await loadPokemonAndUpdateButton(amount, controls.loadMoreBtn);
+}
+
+function getSearchQuery() {
+    const searchInput = document.getElementById('searchInput');
+    return searchInput.value.trim().toLowerCase();
+}
+
+function findPokemonInList(query) {
+    return pokemonList.filter(pokemon => {
+        const nameMatches = pokemon.name.toLowerCase().includes(query);
+        const idMatches = pokemon.id.toString() === query;
+
+        return nameMatches || idMatches;
+    });
+}
+
 async function searchPokemon() {
-    let searchInput = document.getElementById('searchInput');
-    let query = searchInput.value.trim().toLowerCase();
+    const query = getSearchQuery();
 
     if (query.length < 3) {
         renderCharacters(pokemonList);
         return;
     }
-    let filteredList = pokemonList.filter(pokemon => {
-        let nameMatch = pokemon.name.toLowerCase().includes(query);
-        let idMatch = pokemon.id.toString() === query;
-        return nameMatch || idMatch;
-    });
+
+    const filteredList = findPokemonInList(query);
 
     if (filteredList.length > 0) {
         showSearchUI();
         renderCharacters(filteredList);
-    } else {
-        fetchAndRenderFromAPI(query);
+        return;
     }
+
+    await fetchAndRenderFromAPI(query);
 }
 
 function showSearchUI() {
@@ -313,36 +382,64 @@ function showSearchUI() {
     if (loadMsg) loadMsg.style.display = 'none'; // Search lo unnappudu message hide avthundi
 }
 
+async function fetchPokemonFromAPI(query) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
+
+    if (!response.ok) {
+        throw new Error('Data not found');
+    }
+
+    return await response.json();
+}
+
+function renderPokemonSearchResult(pokemon) {
+    renderCharacters([pokemon]);
+    showSearchUI();
+}
+
+function renderPokemonSearchError(query) {
+    const container = document.getElementById('character-container');
+
+    if (container) {
+        container.innerHTML =
+            `<p class="no-results">No Pokémon found for "${query}"</p>`;
+    }
+
+    showSearchUI();
+}
+
 async function fetchAndRenderFromAPI(query) {
     try {
-        let response = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
-        if (!response.ok)
-            throw new Error("Data Not found");
-
-        let pokemonData = await response.json();
-
-        renderCharacters([pokemonData]);
-        showSearchUI();
+        const pokemon = await fetchPokemonFromAPI(query);
+        renderPokemonSearchResult(pokemon);
     } catch (error) {
-        let container = document.getElementById('character-container');
-        container.innerHTML = `<p class="no-results">No Pokémon found for "${query}"</p>`;
-        showSearchUI();
+        console.error('Error searching for Pokémon:', error);
+        renderPokemonSearchError(query);
     }
 }
 
-function resetHome() {
-    let searchInput = document.getElementById('searchInput');
+function clearSearchInput() {
+    const searchInput = document.getElementById('searchInput');
+
     if (searchInput) {
         searchInput.value = '';
     }
-    let loadMoreBtn = document.getElementById('loadMoreBtn');
-    let loadAmountInput = document.getElementById('loadAmountInput');
-    let homeBtn = document.getElementById('homeBtn');
+}
+
+function showHomeControls() {
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const loadAmountInput = document.getElementById('loadAmountInput');
+    const homeBtn = document.getElementById('homeBtn');
+    const loadMsg = document.getElementById('loadMsg');
 
     if (loadMoreBtn) loadMoreBtn.style.display = 'inline-block';
     if (loadAmountInput) loadAmountInput.style.display = 'inline-block';
     if (homeBtn) homeBtn.style.display = 'none';
-    if (loadMsg) loadMsg.style.display = 'block'; // Home ki vachaka malli message kanipistundi
+    if (loadMsg) loadMsg.style.display = 'block';
+}
 
+function resetHome() {
+    clearSearchInput();
+    showHomeControls();
     renderCharacters(pokemonList);
 }
